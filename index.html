@@ -6,6 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <title>Ghost Chat</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 76'%3E%3Cdefs%3E%3CradialGradient id='g' cx='50%25' cy='28%25' r='75%25'%3E%3Cstop offset='0%25' stop-color='%23f5e8ff'/%3E%3Cstop offset='45%25' stop-color='%23c084fc'/%3E%3Cstop offset='100%25' stop-color='%237c3aed'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cpath d='M32 2 C14 2 4 16 4 34 L4 66 C6 63 9 58 12 58 C16 58 18 66 22 66 C26 66 28 58 32 58 C36 58 38 66 42 66 C46 66 48 58 52 58 C55 58 58 63 60 66 L60 34 C60 16 50 2 32 2 Z' fill='url(%23g)'/%3E%3Cellipse cx='23' cy='35' rx='4.2' ry='6.5' fill='%231a0a2e'/%3E%3Cellipse cx='41' cy='35' rx='4.2' ry='6.5' fill='%231a0a2e'/%3E%3C/svg%3E">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@700;800;900&display=swap');
@@ -74,6 +75,8 @@ html,body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
 .inp-hint{font-size:11px;color:var(--text3);margin-top:5px;line-height:1.5;}
 .ghost-hint{color:var(--purple2);background:#7c3aed12;border:1px solid #7c3aed30;border-radius:8px;padding:8px 10px;font-size:12px;}
 .btn-primary{width:100%;padding:14px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border:none;border-radius:12px;color:#fff;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 4px 20px #7c3aed44;}
+.gender-btn{flex:1;padding:12px;background:var(--bg3);border:1.5px solid var(--border);border-radius:12px;color:var(--text2);font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;}
+.gender-btn.selected{background:linear-gradient(135deg,#7c3aed33,#6d28d933);border-color:var(--purple);color:var(--text);}
 .btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 24px #7c3aed66;}
 .btn-primary:active{transform:translateY(1px);}
 .btn-primary:disabled{opacity:.6;cursor:not-allowed;transform:none;}
@@ -154,6 +157,7 @@ html,body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
 .ci-info{flex:1;min-width:0;}
 .ci-name{font-size:14px;font-weight:600;}
 .ci-preview{font-size:12px;color:var(--text2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ci-badge{background:var(--purple);color:#fff;font-size:11px;font-weight:700;min-width:20px;height:20px;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:0 6px;margin-top:4px;box-shadow:0 2px 8px #7c3aed66;}
 .ci-meta{display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
 .ci-time{font-size:11px;color:var(--text3);}
 .ci-badge{background:var(--purple);color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px;min-width:18px;text-align:center;}
@@ -217,6 +221,16 @@ html,body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
 .msg-input::placeholder{color:var(--text3);}
 .send-btn{width:44px;height:44px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border:none;border-radius:12px;cursor:pointer;display:grid;place-items:center;font-size:18px;color:#fff;transition:all .2s;flex-shrink:0;box-shadow:0 2px 12px #7c3aed44;}
 .send-btn:active{transform:scale(.88);}
+.emoji-btn{width:40px;height:44px;background:none;border:none;font-size:22px;cursor:pointer;flex-shrink:0;display:grid;place-items:center;transition:transform .15s;}
+.emoji-btn:active{transform:scale(.85);}
+.emoji-panel{background:var(--bg2);border-top:1px solid var(--border);display:flex;flex-direction:column;height:260px;flex-shrink:0;}
+.emoji-tabs{display:flex;overflow-x:auto;border-bottom:1px solid var(--border);flex-shrink:0;}
+.emoji-tabs::-webkit-scrollbar{display:none;}
+.emoji-tab{padding:10px 12px;font-size:18px;cursor:pointer;opacity:.5;transition:opacity .15s;flex-shrink:0;}
+.emoji-tab.active{opacity:1;border-bottom:2px solid var(--purple);}
+.emoji-grid{flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(8,1fr);gap:2px;padding:8px;align-content:start;}
+.emoji-grid span{font-size:22px;text-align:center;padding:6px 0;cursor:pointer;border-radius:8px;transition:background .1s;user-select:none;}
+.emoji-grid span:active{background:var(--bg3);}
 .send-btn:hover{transform:scale(1.06);}
 .send-btn:active{transform:scale(.94);}
 
@@ -303,7 +317,14 @@ html,body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
   <div class="splash-inner">
     <div class="ghost-wrap">
       <div class="ghost-glow"></div>
-      <span class="ghost-emoji">👻</span>
+      <span class="ghost-emoji">
+        <svg width="90" height="106" viewBox="0 0 64 76" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 0 20px #a855f7cc) drop-shadow(0 0 40px #7c3aed77)">
+          <defs><radialGradient id="ggSplash" cx="50%" cy="28%" r="75%"><stop offset="0%" stop-color="#f5e8ff"/><stop offset="45%" stop-color="#c084fc"/><stop offset="100%" stop-color="#7c3aed"/></radialGradient></defs>
+          <path d="M32 2 C14 2 4 16 4 34 L4 66 C6 63 9 58 12 58 C16 58 18 66 22 66 C26 66 28 58 32 58 C36 58 38 66 42 66 C46 66 48 58 52 58 C55 58 58 63 60 66 L60 34 C60 16 50 2 32 2 Z" fill="url(#ggSplash)"/>
+          <ellipse cx="23" cy="35" rx="4.2" ry="6.5" fill="#1a0a2e"/>
+          <ellipse cx="41" cy="35" rx="4.2" ry="6.5" fill="#1a0a2e"/>
+        </svg>
+      </span>
     </div>
     <div id="splash-phase-1" class="splash-phase" style="animation-delay:.1s">
       <div class="made-by-label">Made by</div>
@@ -327,7 +348,14 @@ html,body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
 <div id="auth" class="screen">
   <div class="auth-box">
     <div class="auth-logo">
-      <span style="font-size:28px">👻</span>
+      <span style="display:inline-flex">
+        <svg width="32" height="38" viewBox="0 0 64 76" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 0 8px #a855f7aa)">
+          <defs><radialGradient id="ggAuth" cx="50%" cy="28%" r="75%"><stop offset="0%" stop-color="#f5e8ff"/><stop offset="45%" stop-color="#c084fc"/><stop offset="100%" stop-color="#7c3aed"/></radialGradient></defs>
+          <path d="M32 2 C14 2 4 16 4 34 L4 66 C6 63 9 58 12 58 C16 58 18 66 22 66 C26 66 28 58 32 58 C36 58 38 66 42 66 C46 66 48 58 52 58 C55 58 58 63 60 66 L60 34 C60 16 50 2 32 2 Z" fill="url(#ggAuth)"/>
+          <ellipse cx="23" cy="35" rx="4.2" ry="6.5" fill="#1a0a2e"/>
+          <ellipse cx="41" cy="35" rx="4.2" ry="6.5" fill="#1a0a2e"/>
+        </svg>
+      </span>
       <div class="auth-logo-text"><span class="g">Ghost</span><span class="c">Chat</span></div>
     </div>
     <div class="auth-tabs">
@@ -354,6 +382,16 @@ html,body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
       </div>
       <div class="inp-group"><label>Confirm Password</label>
         <input id="s-pass2" type="password" placeholder="Re-enter password">
+      </div>
+      <div class="inp-group">
+        <label>Gender</label>
+        <div style="display:flex;gap:10px">
+          <button type="button" id="gender-male-btn" class="gender-btn" onclick="selectGender('male')">♂️ Male</button>
+          <button type="button" id="gender-female-btn" class="gender-btn" onclick="selectGender('female')">♀️ Female</button>
+        </div>
+      </div>
+      <div class="inp-hint" style="margin-bottom:14px;color:var(--danger);background:#7f1d1d22;border:1px solid #7f1d1d55;border-radius:10px;padding:10px 12px;">
+        ⚠️ <b>Disclaimer:</b> Apna real naam ya asli identity kabhi na use karein. Rules todne par ya inappropriate behaviour karne par automated bots aapko turant platform se kick/ban kar denge.
       </div>
       <div class="inp-hint ghost-hint" style="margin-bottom:14px">
         👻 Ghost Chat ka apna internal system hai — koi Gmail nahi chahiye. Sirf username + password!
@@ -387,7 +425,14 @@ html,body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
 
 <!-- LOCKSCREEN -->
 <div id="lockscreen" class="screen">
-  <div class="lock-ghost">👻</div>
+  <div class="lock-ghost">
+    <svg width="70" height="82" viewBox="0 0 64 76" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 0 16px #a855f7bb)">
+      <defs><radialGradient id="ggLock" cx="50%" cy="28%" r="75%"><stop offset="0%" stop-color="#f5e8ff"/><stop offset="45%" stop-color="#c084fc"/><stop offset="100%" stop-color="#7c3aed"/></radialGradient></defs>
+      <path d="M32 2 C14 2 4 16 4 34 L4 66 C6 63 9 58 12 58 C16 58 18 66 22 66 C26 66 28 58 32 58 C36 58 38 66 42 66 C46 66 48 58 52 58 C55 58 58 63 60 66 L60 34 C60 16 50 2 32 2 Z" fill="url(#ggLock)"/>
+      <ellipse cx="23" cy="35" rx="4.2" ry="6.5" fill="#1a0a2e"/>
+      <ellipse cx="41" cy="35" rx="4.2" ry="6.5" fill="#1a0a2e"/>
+    </svg>
+  </div>
   <div class="lock-title">Ghost Chat Locked</div>
   <div class="lock-sub">Enter your 4-digit PIN</div>
   <div class="pin-display">
@@ -485,9 +530,14 @@ html,body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
         </div>
       </div>
       <div class="messages-area" id="messages-area"></div>
+      <div id="emoji-panel" class="emoji-panel" style="display:none">
+        <div class="emoji-tabs" id="emoji-tabs"></div>
+        <div class="emoji-grid" id="emoji-grid"></div>
+      </div>
       <div class="msg-input-area">
+        <button class="emoji-btn" onmousedown="event.preventDefault()" onclick="toggleEmojiPanel()">😊</button>
         <textarea class="msg-input" id="msg-input" placeholder="Type a message..." rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
-        <button class="send-btn" onclick="sendMessage()">➤</button>
+        <button class="send-btn" onmousedown="event.preventDefault()" onclick="sendMessage()">➤</button>
       </div>
     </div>
   </div>
@@ -769,6 +819,13 @@ async function doLogin(btn){
   await loadProfile();
 }
 
+let selectedGender=null;
+function selectGender(g){
+  selectedGender=g;
+  document.getElementById('gender-male-btn').classList.toggle('selected',g==='male');
+  document.getElementById('gender-female-btn').classList.toggle('selected',g==='female');
+}
+
 async function doSignup(btn){
   const username=document.getElementById('s-user').value.trim().toLowerCase();
   const password=document.getElementById('s-pass').value;
@@ -777,6 +834,7 @@ async function doSignup(btn){
   if(username.length<3)return authMsg('Username must be 3+ chars','err');
   if(password.length<6)return authMsg('Password must be 6+ chars','err');
   if(password!==pass2)return authMsg('Passwords do not match','err');
+  if(!selectedGender)return authMsg('Please select your gender','err');
   btn.disabled=true;btn.innerHTML='<span class="spinner"></span>';
 
   const{data:ex}=await sb.from('profiles').select('id').eq('username',username).single();
@@ -790,8 +848,12 @@ async function doSignup(btn){
   }
   ME=data.user||(data.session&&data.session.user);
   if(!ME)return authMsg('Signup failed. Disable email confirmation in Supabase.','err');
-  await sb.from('profiles').insert({id:ME.id,username,avatar_url:null,created_at:new Date().toISOString()}).select();
-  PROFILE={id:ME.id,username,avatar_url:null};
+  const{error:profErr}=await sb.from('profiles').insert({id:ME.id,username,avatar_url:null,gender:selectedGender,created_at:new Date().toISOString()}).select();
+  if(profErr){
+    playSound('error');
+    return authMsg('Account created but profile save failed: '+profErr.message,'err');
+  }
+  PROFILE={id:ME.id,username,avatar_url:null,gender:selectedGender};
   playSound('success');
   showMainApp();
 }
@@ -801,26 +863,27 @@ async function loadProfile(){
   const{data}=await sb.from('profiles').select('*').eq('id',ME.id).single();
   if(!data||!data.username){showScreen('setup');return;}
   PROFILE=data;
-  const pin=localStorage.getItem(`gc_pin_${ME.id}`);
-  if(pin){showScreen('lockscreen');pinBuf='';updatePinDots();}
+  const{data:settings}=await sb.from('user_settings').select('*').eq('id',ME.id).maybeSingle();
+  PROFILE.pin=settings?.pin||null;
+  PROFILE.bg_id=settings?.bg_id||null;
+  PROFILE.bg_style=settings?.bg_style||null;
+  if(PROFILE.pin){showScreen('lockscreen');pinBuf='';updatePinDots();}
   else showMainApp();
 }
 
 function showMainApp(){
   showScreen('app');
-  const bg=localStorage.getItem(`gc_bg_${ME.id}`);
-  if(bg)document.getElementById('messages-area').setAttribute('style',bg);
+  if(PROFILE.bg_style)document.getElementById('messages-area').setAttribute('style',PROFILE.bg_style);
   // Update all displays
-  document.getElementById('corner-uname').textContent=`@${PROFILE.username}`;
+  document.getElementById('corner-uname').textContent=`@${PROFILE.username}${genderIcon(PROFILE.gender)}`;
   document.getElementById('corner-init').textContent=init(PROFILE.username);
-  document.getElementById('pd-uname').textContent=PROFILE.username;
+  document.getElementById('pd-uname').textContent=PROFILE.username+genderIcon(PROFILE.gender);
   document.getElementById('pd-init').textContent=init(PROFILE.username);
   if(PROFILE.avatar_url){
     setAv('corner-img','corner-init',PROFILE.avatar_url,PROFILE.username);
     setAv('pd-img','pd-init',PROFILE.avatar_url,PROFILE.username);
   }
-  const pin=localStorage.getItem(`gc_pin_${ME.id}`);
-  document.getElementById('pin-status-text').textContent=pin?'PIN is set — tap to change':'Set a PIN to lock the app';
+  document.getElementById('pin-status-text').textContent=PROFILE.pin?'PIN is set — tap to change':'Set a PIN to lock the app';
   loadChats();
   subscribeRT();
   setupPresence();
@@ -887,13 +950,71 @@ async function loadChats(){
 
   const ids=[...new Set(msgs.map(m=>m.sender_id===ME.id?m.receiver_id:m.sender_id))];
   if(!ids.length){renderChats([]);return;}
-  const{data:profiles}=await sb.from('profiles').select('id,username,avatar_url').in('id',ids);
+  const{data:profiles}=await sb.from('profiles').select('id,username,avatar_url,gender').in('id',ids);
+  const{data:reads}=await sb.from('chat_reads').select('peer_id,last_read_at,pinned,hidden').eq('user_id',ME.id);
+  const readMap={};(reads||[]).forEach(r=>readMap[r.peer_id]=r);
+
   ALL_CHATS=(profiles||[]).map(p=>{
     const last=msgs.find(m=>m.sender_id===p.id||m.receiver_id===p.id);
-    return{...p,last_msg:last?.content||'',last_time:last?.created_at||''};
-  });
+    const rd=readMap[p.id]||{};
+    const unread=msgs.filter(m=>m.sender_id===p.id&&m.receiver_id===ME.id&&(!rd.last_read_at||new Date(m.created_at)>new Date(rd.last_read_at))).length;
+    return{...p,last_msg:last?.content||'',last_time:last?.created_at||'',unread,pinned:!!rd.pinned,hidden:!!rd.hidden};
+  }).filter(c=>!c.hidden);
+  ALL_CHATS.sort((a,b)=>(b.pinned-a.pinned)||(new Date(b.last_time)-new Date(a.last_time)));
   renderChats(ALL_CHATS);
 }
+
+async function markChatRead(peerId){
+  await sb.from('chat_reads').upsert({user_id:ME.id,peer_id:peerId,last_read_at:new Date().toISOString(),hidden:false},{onConflict:'user_id,peer_id'});
+  const c=ALL_CHATS.find(x=>x.id===peerId);
+  if(c)c.unread=0;
+  renderChats(ALL_CHATS);
+}
+
+async function togglePinChat(peerId){
+  closeChatItemMenu();
+  const c=ALL_CHATS.find(x=>x.id===peerId);
+  const newPinned=!(c?.pinned);
+  await sb.from('chat_reads').upsert({user_id:ME.id,peer_id:peerId,pinned:newPinned},{onConflict:'user_id,peer_id'});
+  toast(newPinned?'Chat pinned':'Chat unpinned','success');
+  loadChats();
+}
+
+async function deleteChatHistory(peerId){
+  closeChatItemMenu();
+  await sb.from('chat_reads').upsert({user_id:ME.id,peer_id:peerId,hidden:true},{onConflict:'user_id,peer_id'});
+  toast('Removed from history','success');
+  loadChats();
+}
+
+function openChatItemMenu(evt,peerId,isPinned){
+  evt.stopPropagation();
+  closeChatItemMenu();
+  const overlay=document.createElement('div');
+  overlay.className='msg-del-overlay';
+  overlay.style.cssText='position:fixed;inset:0;z-index:998;background:rgba(0,0,0,0);display:flex;align-items:center;justify-content:center;transition:background .2s ease;';
+  const menu=document.createElement('div');
+  menu.className='msg-del-menu';
+  menu.style.cssText='background:var(--bg3);border:1px solid var(--border);border-radius:16px;box-shadow:0 12px 40px #000a;overflow:hidden;min-width:220px;transform:scale(.85);opacity:0;transition:transform .18s cubic-bezier(.34,1.56,.64,1),opacity .18s ease;';
+  menu.innerHTML=`
+    <div style="padding:12px 16px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px" onclick="togglePinChat('${peerId}')">📌 <span>${isPinned?'Unpin chat':'Pin chat'}</span></div>
+    <div style="padding:12px 16px;font-size:13px;cursor:pointer;color:var(--danger);display:flex;align-items:center;gap:8px" onclick="deleteChatHistory('${peerId}')">🗑 <span>Delete from history</span></div>
+    <div style="padding:12px 16px;font-size:13px;cursor:pointer;color:var(--text3);border-top:1px solid var(--border)" onclick="closeChatItemMenu()">Cancel</div>`;
+  overlay.appendChild(menu);
+  overlay.onclick=closeChatItemMenu;
+  document.body.appendChild(overlay);
+  requestAnimationFrame(()=>{overlay.style.background='rgba(0,0,0,.5)';menu.style.transform='scale(1)';menu.style.opacity='1';});
+}
+function closeChatItemMenu(){
+  const overlay=document.querySelector('.msg-del-overlay');
+  if(!overlay)return;
+  const menu=overlay.querySelector('.msg-del-menu');
+  overlay.style.background='rgba(0,0,0,0)';
+  if(menu){menu.style.transform='scale(.85)';menu.style.opacity='0';}
+  setTimeout(()=>overlay.remove(),180);
+}
+
+function genderIcon(g){return g==='male'?' ♂️':g==='female'?' ♀️':'';}
 
 function renderChats(chats){
   const list=document.getElementById('chats-list');
@@ -907,10 +1028,14 @@ function renderChats(chats){
         ${onlineIds.has(c.id)?'<div class="ci-online"></div>':''}
       </div>
       <div class="ci-info">
-        <div class="ci-name">${esc(c.username)}</div>
-        <div class="ci-preview">${esc(c.last_msg||'Start a conversation')}</div>
+        <div class="ci-name">${c.pinned?'📌 ':''}${esc(c.username)}${genderIcon(c.gender)}</div>
+        <div class="ci-preview">${esc(c.last_msg||'Start a conversation')}${c.unread?` <span style="color:var(--purple2);font-weight:600">• ${c.unread} msg${c.unread>1?'s':''}</span>`:''}</div>
       </div>
-      <div class="ci-meta"><div class="ci-time">${c.last_time?fmtTime(c.last_time):''}</div></div>
+      <div class="ci-meta">
+        <div class="ci-time">${c.last_time?fmtTime(c.last_time):''}</div>
+        ${c.unread?`<div class="ci-badge">${c.unread>99?'99+':c.unread}</div>`:''}
+      </div>
+      <div style="cursor:pointer;padding:6px;color:var(--text3);font-size:16px" onclick="openChatItemMenu(event,'${c.id}',${c.pinned})">⋮</div>
     </div>
   `).join('');
 }
@@ -928,7 +1053,8 @@ async function searchPeople(q){
   if(!q||q.length<1){list.innerHTML='<div class="empty-state">Type a username to search</div>';return;}
   list.innerHTML='<div class="empty-state">Searching...</div>';
   peopleTimer=setTimeout(async()=>{
-    const{data}=await sb.from('profiles').select('id,username,avatar_url').ilike('username',`%${q}%`).neq('id',ME.id).limit(20);
+    const{data,error}=await sb.from('profiles').select('id,username,avatar_url,gender').ilike('username',`%${q}%`).neq('id',ME.id).limit(20);
+    if(error){list.innerHTML=`<div class="empty-state">Error: ${esc(error.message)}</div>`;return;}
     if(!data||!data.length){list.innerHTML='<div class="empty-state">No users found 👻</div>';return;}
     const onlineIds=getOnlineIds();
     list.innerHTML=data.map(u=>{
@@ -940,7 +1066,7 @@ async function searchPeople(q){
           ${online?'<div class="pc-online"></div>':''}
         </div>
         <div class="pc-info">
-          <div class="pc-name">${esc(u.username)}</div>
+          <div class="pc-name">${esc(u.username)}${genderIcon(u.gender)}</div>
           <div class="pc-status ${online?'online':''}">${online?'● Online now':'Offline'}</div>
         </div>
         <button class="chat-now-btn" onclick="event.stopPropagation();startDirectChat('${u.id}','${u.username}','${u.avatar_url||''}')">Chat</button>
@@ -965,7 +1091,7 @@ function setupPresence(){
     .on('presence',{event:'join'},({key,newPresences})=>{if(key!==ME.id)ONLINE_USERS.set(key,newPresences[0]);refreshOnlineTab();})
     .on('presence',{event:'leave'},({key})=>{ONLINE_USERS.delete(key);refreshOnlineTab();})
     .subscribe(async status=>{
-      if(status==='SUBSCRIBED')await presenceCh.track({user_id:ME.id,username:PROFILE.username,avatar_url:PROFILE.avatar_url||null});
+      if(status==='SUBSCRIBED')await presenceCh.track({user_id:ME.id,username:PROFILE.username,avatar_url:PROFILE.avatar_url||null,gender:PROFILE.gender||null});
     });
 }
 
@@ -985,7 +1111,7 @@ function loadOnlineUsers(){
         <div class="pc-online"></div>
       </div>
       <div class="pc-info">
-        <div class="pc-name">${esc(u.username)}</div>
+        <div class="pc-name">${esc(u.username)}${genderIcon(u.gender)}</div>
         <div class="pc-status online">● Online now</div>
       </div>
       <button class="chat-now-btn" onclick="event.stopPropagation();startDirectChat('${id}','${u.username}','${u.avatar_url||''}')">Chat</button>
@@ -1007,7 +1133,8 @@ function switchSidebarTab(tab,btn){
 async function loadAllUsers(){
   const list=document.getElementById('allusers-list');
   list.innerHTML='<div class="empty-state">Loading users...</div>';
-  const{data}=await sb.from('profiles').select('id,username,avatar_url').neq('id',ME.id).order('username',{ascending:true}).limit(200);
+  const{data,error}=await sb.from('profiles').select('id,username,avatar_url,gender').neq('id',ME.id).order('username',{ascending:true}).limit(200);
+  if(error){list.innerHTML=`<div class="empty-state">Error: ${esc(error.message)}</div>`;return;}
   if(!data||!data.length){list.innerHTML='<div class="empty-state">No other users yet 👻</div>';return;}
   const onlineIds=getOnlineIds();
   list.innerHTML=data.map(u=>{
@@ -1019,7 +1146,7 @@ async function loadAllUsers(){
         ${online?'<div class="pc-online"></div>':''}
       </div>
       <div class="pc-info">
-        <div class="pc-name">${esc(u.username)}</div>
+        <div class="pc-name">${esc(u.username)}${genderIcon(u.gender)}</div>
         <div class="pc-status ${online?'online':''}">${online?'● Online now':'Offline'}</div>
       </div>
       <button class="chat-now-btn" onclick="event.stopPropagation();startDirectChat('${u.id}','${u.username}','${u.avatar_url||''}')">Chat</button>
@@ -1049,11 +1176,14 @@ async function openChat(userId,username,avatarUrl,type='dm'){
   tbAv.className='tb-avatar';
   tbAv.innerHTML=avatarUrl?`<img src="${avatarUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`${init(username)}`;
   document.getElementById('tb-name').textContent=username;
+  const chCache=ALL_CHATS.find(c=>c.id===userId);
+  document.getElementById('tb-name').textContent=username+genderIcon(chCache?.gender||ONLINE_USERS.get(userId)?.gender);
   const online=getOnlineIds().has(userId);
   document.getElementById('tb-status').textContent=online?'● Online now':'Ghost Chat';
 
   document.querySelectorAll('.chat-item').forEach(el=>el.classList.toggle('active',el.querySelector('.ci-name')?.textContent===username));
   await loadMessages(userId);
+  markChatRead(userId);
 }
 
 async function loadMessages(userId){
@@ -1154,16 +1284,57 @@ async function sendMessage(){
   const content=inp.value.trim();
   if(!content||!ACTIVE)return;
   inp.value='';inp.style.height='auto';
+  inp.focus(); // keep mobile keyboard open after send
 
   const{data,error}=await sb.from('messages').insert({
     sender_id:ME.id,receiver_id:ACTIVE.user_id,content,created_at:new Date().toISOString()
   }).select().single();
   if(error){toast('Send failed: '+error.message,'error');return;}
   if(data){appendMsg(data);playSound('send');loadChats();}
+  inp.focus(); // ensure keyboard stays open even after async DB call
 }
 
 function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}}
 function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px';}
+
+// ── EMOJI PICKER ──
+const EMOJI_CATS={
+  '😊':'😀 😃 😄 😁 😆 😅 🤣 😂 🙂 🙃 😉 😊 😇 🥰 😍 🤩 😘 😗 😚 😙 😋 😛 😜 🤪 😝 🤑 🤗 🤭 🤫 🤔 🤐 🤨 😐 😑 😶 😏 😒 🙄 😬 🤥 😌 😔 😪 🤤 😴 😷 🤒 🤕 🤢 🤮 🤧 🥵 🥶 🥴 😵 🤯 🤠 🥳 🥸 😎 🤓 🧐 😕 😟 🙁 😮 😯 😲 😳 🥺 😦 😧 😨 😰 😥 😢 😭 😱 😖 😣 😞 😓 😩 😫 🥱 😤 😡 😠 🤬 😈 👿 💀 ☠️ 💩 🤡 👹 👺 👻 👽 👾 🤖 😺 😸 😹 😻 😼 😽 🙀 😿 😾'.split(' '),
+  '👋':'👋 🤚 🖐️ ✋ 🖖 👌 🤌 🤏 ✌️ 🤞 🤟 🤘 🤙 👈 👉 👆 🖕 👇 ☝️ 👍 👎 ✊ 👊 🤛 🤜 👏 🙌 👐 🤲 🤝 🙏 ✍️ 💅 🤳 💪 🦾 🦵 🦿 🦶 👂 🦻 👃 🧠 🦷 🦴 👀 👁️ 👅 👄 💋 🩸'.split(' '),
+  '❤️':'❤️ 🧡 💛 💚 💙 💜 🖤 🤍 🤎 💔 ❣️ 💕 💞 💓 💗 💖 💘 💝 💟 ♥️ 💯 💢 💥 💫 💦 💨 🕳️ 💣 💬 👁️‍🗨️ 🗨️ 🗯️ 💭 💤'.split(' '),
+  '🐶':'🐶 🐱 🐭 🐹 🐰 🦊 🐻 🐼 🐨 🐯 🦁 🐮 🐷 🐽 🐸 🐵 🙈 🙉 🙊 🐒 🐔 🐧 🐦 🐤 🐣 🐥 🦆 🦅 🦉 🦇 🐺 🐗 🐴 🦄 🐝 🐛 🦋 🐌 🐞 🐜 🪰 🪲 🪳 🦟 🦗 🕷️ 🕸️ 🦂 🐢 🐍 🦎 🦖 🦕 🐙 🦑 🦐 🦞 🦀 🐡 🐠 🐟 🐬 🐳 🐋 🦈 🐊 🐅 🐆 🦓 🦍 🦧 🦣 🐘 🦛 🦏 🐪 🐫 🦒 🦘 🐃 🐂 🐄 🐎 🐖 🐏 🐑 🦙 🐐 🦌 🐕 🐩 🐈 🐓 🦃 🦤 🦚 🦜 🦢 🦩 🕊️ 🐇 🦝 🦨 🦡 🦫 🦦 🦥 🐁 🐀 🐿️ 🦔'.split(' '),
+  '🍎':'🍎 🍐 🍊 🍋 🍌 🍉 🍇 🍓 🫐 🍈 🍒 🍑 🥭 🍍 🥥 🥝 🍅 🍆 🥑 🥦 🥬 🥒 🌶️ 🫑 🌽 🥕 🫒 🧄 🧅 🥔 🍠 🥐 🥯 🍞 🥖 🥨 🧀 🥚 🍳 🧈 🥞 🧇 🥓 🥩 🍗 🍖 🌭 🍔 🍟 🍕 🫓 🥪 🥙 🧆 🌮 🌯 🫔 🥗 🥘 🫕 🥫 🍝 🍜 🍲 🍛 🍣 🍱 🥟 🦪 🍤 🍙 🍚 🍘 🍥 🥠 🥮 🍢 🍡 🍧 🍨 🍦 🥧 🧁 🍰 🎂 🍮 🍭 🍬 🍫 🍿 🍩 🍪 🌰 🥜 🍯 🥛 🍼 ☕ 🍵 🧃 🥤 🧋 🍶 🍺 🍻 🥂 🍷 🥃 🍸 🍹 🧉 🍾'.split(' '),
+  '⚽':'⚽ 🏀 🏈 ⚾ 🥎 🎾 🏐 🏉 🥏 🎱 🪀 🏓 🏸 🏒 🏑 🥍 🏏 🪃 🥅 ⛳ 🪁 🏹 🎣 🤿 🥊 🥋 🎽 🛹 🛼 🛷 ⛸️ 🥌 🎿 ⛷️ 🏂 🪂 🏋️ 🤼 🤸 🤺 🤾 🏌️ 🏇 🧘 🏄 🏊 🤽 🚣 🧗 🚵 🚴 🏆 🥇 🥈 🥉 🏅 🎖️ 🏵️ 🎗️ 🎫 🎟️ 🎪 🤹 🎭 🩰 🎨 🎬 🎤 🎧 🎼 🎹 🥁 🪘 🎷 🎺 🎸 🪕 🎻'.split(' '),
+  '🚗':'🚗 🚕 🚙 🚌 🚎 🏎️ 🚓 🚑 🚒 🚐 🛻 🚚 🚛 🚜 🛵 🏍️ 🛺 🚲 🛴 🚨 🚔 🚍 🚘 🚖 🚡 🚠 🚟 🚃 🚋 🚞 🚝 🚄 🚅 🚈 🚂 🚆 🚇 🚊 🚉 ✈️ 🛫 🛬 🛩️ 💺 🛰️ 🚀 🛸 🚁 🛶 ⛵ 🚤 🛥️ 🛳️ ⛴️ 🚢 ⚓ 🪝 ⛽ 🚧 🚦 🚥 🗺️ 🗿 🗽 🗼 🏰 🏯 🏟️ 🎡 🎢 🎠 ⛲ ⛱️ 🏖️ 🏝️ 🏜️ 🌋 ⛰️ 🏔️ 🗻 🏕️ ⛺ 🏠 🏡 🏘️ 🏚️ 🏗️ 🏭 🏢 🏬 🏣 🏤 🏥 🏦 🏨 🏪 🏫 🏩 💒 🏛️ ⛪ 🕌 🕍 🛕 🕋 ⛩️'.split(' '),
+  '⭐':'⭐ 🌟 ✨ ⚡ 🔥 💥 ☄️ 🌈 ☀️ 🌤️ ⛅ 🌥️ ☁️ 🌦️ 🌧️ ⛈️ 🌩️ 🌨️ ❄️ ☃️ ⛄ 🌬️ 💨 🌪️ 🌫️ 🌊 💧 💦 ☔ 🌙 🌛 🌜 🌚 🌝 🌞 🪐 🌍 🌎 🌏 🌌 🌠'.split(' '),
+  '🎉':'🎉 🎊 🎈 🎁 🎀 🪄 🪅 🧧 🎃 🎄 🎆 🎇 🧨 ✨ 🎗️ 🎟️ 🎫 🏮 🪔 📿 🧿 💈 🛍️ 🎗️ 📯 🔔 🔕 📢 📣 📻 📱 📲 ☎️ 📞 📟 📠 🔋 🔌 💻 🖥️ 🖨️ ⌨️ 🖱️ 🖲️ 💽 💾 💿 📀 📷 📸 📹 🎥 📽️ 🎞️ 📞 📺 📻 🎙️ 🎚️ 🎛️ ⏰ 🕰️ ⌛ ⏳ 📡'.split(' '),
+  '✅':'✅ ❌ ❎ ✔️ ☑️ 🔴 🟠 🟡 🟢 🔵 🟣 🟤 ⚫ ⚪ 🟥 🟧 🟨 🟩 🟦 🟪 🟫 ⬛ ⬜ ◼️ ◻️ ◾ ◽ ▪️ ▫️ 🔶 🔷 🔸 🔹 🔺 🔻 💠 🔘 🔳 🔲 ⁉️ ❓ ❔ ❗ ❕ 〰️ 💱 💲 ♻️ ⚜️ 🔱 📛 🔰 ⭕ ✳️ ❇️ ✴️ 🆚 💮 🉐 ㊙️ 🈂️ 🈷️ ㊗️ 🈶 🈚 🈸 🈺 🈴 🈵 🈹 🈲 🅰️ 🆎 🅱️ 🆑 🆘 ❤️‍🔥 ❤️‍🩹'.split(' ')
+};
+function toggleEmojiPanel(){
+  const panel=document.getElementById('emoji-panel');
+  const open=panel.style.display==='none';
+  panel.style.display=open?'flex':'none';
+  if(open)buildEmojiPanel();
+}
+function buildEmojiPanel(){
+  const tabsEl=document.getElementById('emoji-tabs');
+  const cats=Object.keys(EMOJI_CATS);
+  tabsEl.innerHTML=cats.map((c,i)=>`<div class="emoji-tab ${i===0?'active':''}" onclick="selectEmojiTab(this,'${c}')">${c}</div>`).join('');
+  selectEmojiTab(tabsEl.children[0],cats[0]);
+}
+function selectEmojiTab(el,cat){
+  document.querySelectorAll('.emoji-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('emoji-grid').innerHTML=EMOJI_CATS[cat].map(e=>`<span onmousedown="event.preventDefault()" onclick="insertEmoji('${e}')">${e}</span>`).join('');
+}
+function insertEmoji(e){
+  const inp=document.getElementById('msg-input');
+  const start=inp.selectionStart, end=inp.selectionEnd;
+  inp.value=inp.value.slice(0,start)+e+inp.value.slice(end);
+  inp.selectionStart=inp.selectionEnd=start+e.length;
+  autoResize(inp);
+  inp.focus();
+}
 function closeMobileChat(){
   document.getElementById('app').classList.remove('chat-open');
   document.getElementById('chat-area').classList.remove('mobile-open');
@@ -1178,7 +1349,8 @@ function subscribeRT(){
       const m=payload.new;
       if(m.receiver_id!==ME.id&&m.sender_id!==ME.id)return;
       if(ACTIVE?.type==='dm'&&(m.sender_id===ACTIVE.user_id||m.receiver_id===ACTIVE.user_id))appendMsg(m);
-      loadChats();
+      const peer=m.sender_id===ME.id?m.receiver_id:m.sender_id;
+      sb.from('chat_reads').upsert({user_id:ME.id,peer_id:peer,hidden:false},{onConflict:'user_id,peer_id'}).then(()=>loadChats());
       if(m.sender_id!==ME.id){
         playSound('receive');
         showNotification(m);
@@ -1298,25 +1470,33 @@ async function doChangePassword(btn){
 }
 
 // ── PIN ──
-function doSetPin(){
+async function doSetPin(){
   const p1=document.getElementById('new-pin').value;
   const p2=document.getElementById('new-pin2').value;
   if(p1.length!==4||!/^\d+$/.test(p1))return msg('pin-modal-msg','Enter exactly 4 digits','err');
   if(p1!==p2)return msg('pin-modal-msg','PINs do not match','err');
-  localStorage.setItem(`gc_pin_${ME.id}`,p1);
+  const{error}=await sb.from('user_settings').upsert({id:ME.id,pin:p1});
+  if(error)return msg('pin-modal-msg','Failed: '+error.message,'err');
+  PROFILE.pin=p1;
   document.getElementById('pin-status-text').textContent='PIN is set — tap to change';
   msg('pin-modal-msg','PIN set!','ok');
   playSound('success');
   setTimeout(()=>closeModal('set-pin'),800);
   toast('PIN set!','success');
 }
-function removePin(){localStorage.removeItem(`gc_pin_${ME.id}`);document.getElementById('pin-status-text').textContent='Set a PIN to lock the app';closeModal('set-pin');toast('PIN removed');}
+async function removePin(){
+  const{error}=await sb.from('user_settings').upsert({id:ME.id,pin:null});
+  if(error){toast('Failed: '+error.message,'error');return;}
+  PROFILE.pin=null;
+  document.getElementById('pin-status-text').textContent='Set a PIN to lock the app';
+  closeModal('set-pin');
+  toast('PIN removed');
+}
 function pinPress(d){
   if(pinBuf.length>=4)return;
   pinBuf+=d;updatePinDots();
   if(pinBuf.length===4){
-    const saved=localStorage.getItem(`gc_pin_${ME.id}`);
-    if(pinBuf===saved){playSound('success');showMainApp();}
+    if(pinBuf===PROFILE.pin){playSound('success');showMainApp();}
     else{playSound('error');document.getElementById('pin-err').textContent='Wrong PIN. Try again.';setTimeout(()=>{pinBuf='';updatePinDots();document.getElementById('pin-err').textContent='';},800);}
   }
 }
@@ -1326,19 +1506,20 @@ function updatePinDots(){for(let i=0;i<4;i++)document.getElementById(`pd${i}`).c
 // ── BACKGROUND ──
 let selBgId=null;
 function buildBgGrid(){
-  const saved=localStorage.getItem(`gc_bg_id_${ME.id}`)||'default';
+  const saved=PROFILE.bg_id||'default';
   document.getElementById('bg-grid').innerHTML=BG.map(b=>`
     <div class="bg-swatch ${b.id===saved?'selected':''}" style="${b.style}" onclick="selBgFn('${b.id}',this)" title="${b.label}"></div>
   `).join('');
   selBgId=null;
 }
 function selBgFn(id,el){document.querySelectorAll('.bg-swatch').forEach(s=>s.classList.remove('selected'));el.classList.add('selected');selBgId=id;}
-function applyBg(){
+async function applyBg(){
   if(!selBgId){closeModal('change-bg');return;}
   const bg=BG.find(b=>b.id===selBgId);if(!bg)return;
   document.getElementById('messages-area').setAttribute('style',bg.style);
-  localStorage.setItem(`gc_bg_id_${ME.id}`,selBgId);
-  localStorage.setItem(`gc_bg_${ME.id}`,bg.style);
+  const{error}=await sb.from('user_settings').upsert({id:ME.id,bg_id:selBgId,bg_style:bg.style});
+  if(error){toast('Failed to save: '+error.message,'error');return;}
+  PROFILE.bg_id=selBgId;PROFILE.bg_style=bg.style;
   closeModal('change-bg');
   playSound('success');
   toast('Background changed!','success');
